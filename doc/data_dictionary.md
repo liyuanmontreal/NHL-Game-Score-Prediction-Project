@@ -1,7 +1,7 @@
 # 🏒 NHL Game JSON Data Dictionary  
 
 This document describes the structure and meaning of the fields in NHL game play-by-play JSON files.
-本文档说明 NHL 官方比赛逐场（Play-by-Play）数据 JSON 文件中各字段的含义，  包括顶层元数据、球队信息、时钟、比赛事件（plays）及事件细节（details）。
+本文档说明 NHL 官方比赛逐场（Play-by-Play）数据 JSON 文件中各字段的含义，包括顶层元数据、球队信息、时钟、比赛事件（plays）及事件细节（details）。
 
 ---
 

@@ -6,7 +6,8 @@ Global configuration constants for NHL data project.
 import os
 
 # API base URL
-API_BASE_URL = "https://api-web.nhle.com/v1/gamecenter"
+API_BASE_URL = "https://api-web.nhle.com/v1"     
+
 
 # Data directories
 DATA_DIR = "./data"
