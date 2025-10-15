@@ -20,6 +20,7 @@ The original project [`IFT6758-B01/iftt6758_project`](https://github.com/IFT6758
 
 ## Run
 ```bash
+pip install -r requirements.txt
 python main.py
 ```
 

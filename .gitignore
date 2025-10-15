@@ -1,3 +1,7 @@
 data/raw/
 **/__pycache__
 doc_me.md
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+setup_notebook_env.bat
