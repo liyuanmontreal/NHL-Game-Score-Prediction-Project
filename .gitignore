@@ -1,6 +1,8 @@
 data/raw/
+data/processed/
 **/__pycache__
 doc_me.md
+doc/doc_me/
 .vscode/settings.json
 .vscode/launch.json
 .vscode/tasks.json

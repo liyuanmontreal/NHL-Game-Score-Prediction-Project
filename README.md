@@ -1,7 +1,7 @@
 # NHL Game Score Prediction Project
 
 This project is based on the Udem's IFT6758 Data Science Course Project.
-This repository refactors the full three milestones code into a clean modular architecture, and add new features.
+This repository refactors the full three milestones code into a clean modular architecture, and rewrite most codes, add new features.
 The original project [`IFT6758-B01/iftt6758_project`](https://github.com/IFT6758-B01/iftt6758_project)
 
 ## Milestone Overview

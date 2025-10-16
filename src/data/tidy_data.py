@@ -34,7 +34,8 @@ def tidy_shots_from_game(game_json: dict) -> pd.DataFrame:
     """Convert one game's shots & goals into tidy rows.
     将单场比赛中的shots与goals事件整理为DataFrame行"""
 
-    game_id = game_json.get("id")
+    
+    game_id = game_json.get("id")   
     events = game_json.get("plays", [])
 
     rows = []
@@ -42,6 +43,8 @@ def tidy_shots_from_game(game_json: dict) -> pd.DataFrame:
         event_type = event.get("typeDescKey")
         if event_type not in ["shot-on-goal", "goal"]:
             continue  # 忽略其他事件类型
+
+        
 
         details = event.get("details", {})
         period = event.get("periodDescriptor", {}).get("number")
@@ -66,6 +69,11 @@ def tidy_shots_from_game(game_json: dict) -> pd.DataFrame:
         # 坐标与射门类型
         x, y = details.get("xCoord"), details.get("yCoord")
         shot_type = details.get("shotType", "Unknown")
+
+        # 过滤无效射门类型
+        if not shot_type or str(shot_type).lower() in ["unknown", "none", "na", ""]:
+            continue
+        
         # Zone Code for figuring out which side the team is on
         zone_code = event.get('details', {}).get('zoneCode', None)
 
@@ -92,29 +100,69 @@ def tidy_shots_from_game(game_json: dict) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def tidy_all_games(raw_dir: str = RAW_DIR ) -> pd.DataFrame:
-    """Aggregate all games into a single DataFrame
-    将所有比赛合并为一个DataFrame"""
 
-    all_rows = []
+
+def tidy_all_games(raw_dir: str =  RAW_DIR, save: bool = True) -> pd.DataFrame:
+    """
+    Aggregate all games into DataFrames grouped by season and save as CSV.  
+    """
+
+    season_dfs = {}
+
     for file in os.listdir(raw_dir):
         if not file.endswith(".json"):
             continue
         path = os.path.join(raw_dir, file)
+
+        # === 自动识别赛季 ===
+        try:
+            # 文件名如 "game_20200001.json"
+            year_str = file.split("game_")[1][:4]
+            start_year = int(year_str)
+            end_year = start_year + 1
+            season_label = f"{start_year}{end_year}"
+        except Exception:
+            season_label = "unknown"
+
         try:
             data = load_json(path)
             df = tidy_shots_from_game(data)
-            all_rows.append(df)
+            if not df.empty:
+                df["season"] = season_label
+                if season_label not in season_dfs:
+                    season_dfs[season_label] = []
+                season_dfs[season_label].append(df)
         except Exception as e:
             print(f"[WARN] Skipping {file}: {e}")
 
-    if not all_rows:
+    if not season_dfs:
         print("[WARN] No valid games processed.")
         return pd.DataFrame()
 
-    full_df = pd.concat(all_rows, ignore_index=True)
-    print(f"[INFO] Tidy dataset created: {len(full_df)} rows")
+    # 合并并保存每个赛季
+    all_dfs = []
+    for season, dfs in season_dfs.items():
+        combined = pd.concat(dfs, ignore_index=True)
+        all_dfs.append(combined)
+
+        if save:
+            processed_dir = os.path.join("data", "processed")
+            os.makedirs(processed_dir, exist_ok=True)
+            csv_path = os.path.join(processed_dir, f"tidy_shots_{season}.csv")
+            combined.to_csv(csv_path, index=False)
+            size_mb = os.path.getsize(csv_path) / (1024 * 1024)
+            print(f"[INFO] Saved {csv_path} ({size_mb:.2f} MB, {len(combined)} rows)")
+
+    # 生成全赛季合并文件
+    full_df = pd.concat(all_dfs, ignore_index=True)
+    if save:
+        all_path = os.path.join("data", "processed", "tidy_shots_all.csv")
+        full_df.to_csv(all_path, index=False)
+        size_mb = os.path.getsize(all_path) / (1024 * 1024)
+        print(f"[INFO] Saved combined dataset: {all_path} ({size_mb:.2f} MB)")
+
     return full_df
+
 
 
 def summarize_game_info(game_json):

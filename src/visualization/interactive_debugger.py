@@ -1,11 +1,11 @@
 
 """
-Interactive Debugger v3 — DataFrame + Better Labels
-NHL 比赛事件交互调试工具 v3 — 使用 DataFrame 展示 + 更友好的名称映射
+Interactive Debugger
+NHL 比赛事件交互调试工具 
 --------------------------------------------------------------------
 - ipywidgets: Dropdown for Game, Event type; Dropdown for Period with "All"
 - Matplotlib: scatter points over rink background (auto-download if missing)
-- pandas: tabular display of selected events (player/team names, jersey numbers)
+- pandas: tabular display of selected events (player/team names)
 """
 import os
 import json

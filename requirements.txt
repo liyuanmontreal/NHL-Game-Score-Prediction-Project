@@ -10,3 +10,4 @@ plotly
 streamlit
 wandb
 pytest
+scipy
